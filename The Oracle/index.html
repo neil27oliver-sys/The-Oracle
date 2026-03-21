@@ -94,7 +94,7 @@
                 Thank you, Neil Oliver!<br><br>
                 Your $3 one-time payment is complete.<br><br>
                 Next step: add your xAI API key to unlock full Grok mode.<br>
-                Click below to open setup.html in a new tab.
+                Click the button below to open setup.html in a new tab.
             </p>
             <button onclick="openSetup()" class="w-full py-5 mb-4 bg-[var(--accent-red)] hover:bg-[var(--accent-red-hover)] text-white font-bold rounded-xl transition text-lg">
                 Open Setup Now (Add xAI Key)
@@ -140,6 +140,7 @@
                     onApprove: (data, actions) => actions.order.capture().then(() => {
                         localStorage.setItem(PAID_KEY, 'true');
                         document.getElementById('paywall-modal').classList.add('hidden');
+                        // Show success modal with open button
                         document.getElementById('success-modal').classList.remove('hidden');
                     }),
                     onError: () => alert("Payment issue – try again.")
@@ -150,7 +151,7 @@
         function openSetup() {
             window.open('setup.html', '_blank');
             document.getElementById('success-modal').classList.add('hidden');
-            document.getElementById('result-output').textContent += "\n\nPayment complete! Add key in setup.html then refresh here for full mode.";
+            document.getElementById('result-output').textContent += "\n\nPayment complete! Key added? Refresh page for full mode.";
         }
 
         function startOracle() {
