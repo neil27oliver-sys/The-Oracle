@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla's Trigram Oracle</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID_HERE&currency=USD&components=buttons"></script>
+    <style>
+        :root {
+            --bg-dark: #0f131a; --accent-red: #b91c1c; --accent-red-hover: #dc2626;
+            --accent-olive: #4b5320; --text-steel: #9ca3af; --glow-crimson: rgba(185,28,28,0.6);
+            --card-bg: rgba(17,24,39,0.92);
+        }
+        body { font-family: 'Playfair Display', serif; background-color: var(--bg-dark); min-height: 100vh; color: #f1f5f9; }
+        .screen-1 { background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.92)), url('assets/teslaoracle.png'); background-size: cover; background-position: center; background-attachment: fixed; }
+        .screen-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(5px); z-index: 5; }
+        .screen-content { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+        .dice-slot { transition: all 0.25s ease; cursor: pointer; text-shadow: 0 0 12px var(--glow-crimson), 0 0 24px rgba(185,28,28,0.4); }
+        .result-box, .input-group { background-color: var(--card-bg); border: 1px solid rgba(185,28,28,0.4); box-shadow: 0 0 35px rgba(185,28,28,0.12), 0 0 70px rgba(75,83,32,0.08); }
+        .loading-animation { border: 4px solid rgba(255,255,255,0.15); border-top: 4px solid var(--accent-red); border-radius: 50%; width: 1.5rem; height: 1.5rem; animation: spin 1s linear infinite; display: inline-block; margin-right: 0.5rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #screen-3-container { display: none; }
+        .modal-container { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: flex-start; justify-content: center; z-index: 50; overflow-y: auto !important; padding: 20px 0; -webkit-overflow-scrolling: touch; }
+        .modal-content { background: #1f2937; padding: 2rem; border-radius: 1rem; max-width: 90%; width: 480px; border: 1px solid var(--accent-red); box-shadow: 0 0 40px rgba(185,28,28,0.3); max-height: 90vh !important; overflow-y: auto !important; padding-bottom: 120px; }
+        #paypal-button-container { min-height: 400px; max-height: 65vh; overflow-y: auto; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+    <div id="screen-1-container" class="screen-1">
+        <div class="screen-overlay"></div>
+        <div class="screen-content">
+            <img src="assets/monogram.png" alt="Monogram" style="position: fixed; top: 1rem; right: 1rem; width: 80px; height: auto; z-index: 20; opacity: 0.85; filter: drop-shadow(0 0 12px var(--glow-crimson));">
+
+            <header class="text-center mb-10 pt-6">
+                <h1 class="text-5xl md:text-7xl font-black tracking-widest mb-3">
+                    <span class="text-[var(--accent-red)]">T</span>esla's <span class="text-[var(--accent-red)]">T</span>rigram <span class="text-[var(--accent-red)]">O</span>racle
+                </h1>
+                <p class="text-xl md:text-2xl text-[var(--text-steel)] font-['Inter']">3-6-9 Field Decoder • Infinite Resonance</p>
+            </header>
+
+            <div id="dice-grid" class="flex justify-center gap-8 md:gap-12 mb-10 p-6 bg-gray-950/70 rounded-2xl shadow-2xl border border-[var(--accent-red)]/30"></div>
+
+            <div class="w-full max-w-3xl">
+                <div class="input-group p-6 mb-6 rounded-2xl shadow-xl">
+                    <input type="text" id="user-prompt" placeholder="Transmit your query to the Field..." class="w-full p-5 text-xl bg-transparent border-b-2 border-[var(--accent-red)] text-white focus:border-[var(--accent-red-hover)] focus:outline-none transition font-['Inter']">
+
+                    <div class="mt-6 flex flex-col sm:flex-row gap-4">
+                        <button id="roll-button" class="flex-1 py-5 px-8 text-lg font-bold rounded-xl bg-gradient-to-r from-[var(--accent-red)] to-[#991b1b] hover:from-[#dc2626] hover:to-[#b91c1c] shadow-xl shadow-[var(--accent-red)]/40 transform hover:scale-[1.02] transition duration-300 text-white" onclick="startOracle()">
+                            Ignite the Oracle
+                        </button>
+                        <button id="audio-button" class="py-5 px-8 text-lg font-bold rounded-xl bg-gray-800 hover:bg-gray-700 transition text-white w-full sm:w-auto" disabled onclick="handleAudioAction()">
+                            🔊 Transmit Aloud
+                        </button>
+                    </div>
+                </div>
+
+                <div class="result-box p-8 rounded-2xl min-h-[320px] max-h-[680px] overflow-y-auto">
+                    <h2 class="text-3xl font-bold text-[var(--accent-red)] mb-5 pb-3 border-b border-[var(--accent-red)]/40">Field Resonance:</h2>
+                    <div id="result-output" class="text-lg text-gray-200 whitespace-pre-wrap leading-relaxed font-['Inter'] leading-7">
+                        The Field awaits your transmission... (Promo mode)
+                    </div>
+
+                    <div id="deep-dive-area" class="mt-6 pt-6 border-t border-gray-700 hidden">
+                        <button id="deep-dive-button" class="w-full py-4 text-lg font-bold rounded-xl bg-gradient-to-r from-[var(--accent-olive)] to-[#556b2f] hover:from-[#6b8e23] hover:to-[#8b9a5b] shadow-lg shadow-green-900/40 transform hover:scale-[1.02] transition duration-300 text-white" onclick="startDeepDive()">
+                            ⚡ Unlock Full Grok Analysis ($3)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paywall Modal -->
+    <div id="paywall-modal" class="modal-container hidden">
+        <div class="modal-content">
+            <h2 class="text-3xl font-black text-[var(--accent-red)] mb-4 text-center">Unlock Full Oracle</h2>
+            <p class="text-gray-300 text-center mb-3 font-['Inter'] text-lg">One-time $3 • Lifetime Full Access • No Subscription</p>
+            <p class="text-sm text-[var(--text-steel)] text-center mb-6">Long Grok-powered replies + Deep Overdrive</p>
+            <div id="paypal-button-container" class="mb-6"></div>
+            <button onclick="document.getElementById('paywall-modal').classList.add('hidden')" class="w-full py-4 bg-gray-700 hover:bg-gray-800 text-white font-bold rounded-xl transition text-lg">← Back (Promo Mode)</button>
+            <p class="text-xs text-center mt-6 text-gray-500">Made with ❤️ in SA 🇿🇦 • Secure via PayPal</p>
+        </div>
+    </div>
+
+    <!-- Payment Success Modal -->
+    <div id="success-modal" class="modal-container hidden">
+        <div class="modal-content" style="max-width: 420px;">
+            <h3 class="text-2xl font-bold text-[var(--accent-red)] mb-5 text-center">Payment Successful!</h3>
+            <p class="text-gray-300 mb-6 text-center font-['Inter']">
+                Thank you, Neil Oliver!<br><br>
+                Your $3 one-time payment is complete.<br><br>
+                Next step: add your xAI API key to unlock full Grok mode.<br>
+                Click below to open setup.html in a new tab.
+            </p>
+            <button onclick="openSetup()" class="w-full py-5 mb-4 bg-[var(--accent-red)] hover:bg-[var(--accent-red-hover)] text-white font-bold rounded-xl transition text-lg">
+                Open Setup Now (Add xAI Key)
+            </button>
+            <button onclick="document.getElementById('success-modal').classList.add('hidden')" class="w-full py-4 bg-gray-700 hover:bg-gray-800 text-white font-bold rounded-xl transition">
+                Close (I'll do it later)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const PAID_KEY = 'oraclePaid';
+        const isPaid = localStorage.getItem(PAID_KEY) === 'true';
+
+        let trigrams = [9, 6, 3];
+        let lastOracleResponse = "";
+        let lastUserPrompt = "";
+
+        function rollAllTrigrams() {
+            trigrams = [rollTrigram(), rollTrigram(), rollTrigram()];
+            document.getElementById('dice-grid').innerHTML = trigrams.map((v, i) => {
+                const s = {9:{char:'⧇',color:'text-red-500'},6:{char:'⧉',color:'text-rose-400'},3:{char:'⧋',color:'text-red-700'}}[v];
+                return `<div class="dice-slot text-8xl md:text-9xl font-black ${s.color} p-5 hover:scale-110 transition-transform" onclick="rerollSingleTrigram(${i})">${s.char}</div>`;
+            }).join('');
+        }
+        function rollTrigram() { return [3,6,9][Math.floor(Math.random()*3)]; }
+        function rerollSingleTrigram(idx) { trigrams[idx] = rollTrigram(); rollAllTrigrams(); }
+
+        function getPromoShortResponse(prompt, trigramStr) {
+            return `**Trigram**: ${trigramStr}\n\nShort promo insight: "${prompt}" resonates with 3-6-9 flow.\n\nUnlock full Grok-powered deep analysis for $3 one-time.`;
+        }
+
+        function showPaywall() {
+            document.getElementById('paywall-modal').classList.remove('hidden');
+            setTimeout(() => {
+                const container = document.getElementById('paypal-button-container');
+                container.innerHTML = '';
+                paypal.Buttons({
+                    createOrder: (data, actions) => actions.order.create({
+                        purchase_units: [{ amount: { value: '3.00' } }],
+                        application_context: { shipping_preference: "NO_SHIPPING" }
+                    }),
+                    onApprove: (data, actions) => actions.order.capture().then(() => {
+                        localStorage.setItem(PAID_KEY, 'true');
+                        document.getElementById('paywall-modal').classList.add('hidden');
+                        document.getElementById('success-modal').classList.remove('hidden');
+                    }),
+                    onError: () => alert("Payment issue – try again.")
+                }).render('#paypal-button-container');
+            }, 300);
+        }
+
+        function openSetup() {
+            window.open('setup.html', '_blank');
+            document.getElementById('success-modal').classList.add('hidden');
+            document.getElementById('result-output').textContent += "\n\nPayment complete! Add key in setup.html then refresh here for full mode.";
+        }
+
+        function startOracle() {
+            const prompt = document.getElementById('user-prompt').value.trim();
+            if (!prompt) return alert("Enter a query.");
+
+            lastUserPrompt = prompt;
+            document.getElementById('result-output').textContent = "Casting short sequence...";
+
+            setTimeout(() => {
+                rollAllTrigrams();
+                const trigramStr = trigrams.join('-');
+                document.getElementById('result-output').textContent = getPromoShortResponse(prompt, trigramStr);
+                document.getElementById('deep-dive-area').classList.remove('hidden');
+            }, 800);
+        }
+
+        function startDeepDive() {
+            if (!isPaid) return showPaywall();
+            alert("Full mode unlocked!\n\nOpen setup.html to add your xAI key, then return here and refresh.");
+        }
+
+        function handleAudioAction() {
+            alert("Audio available in full mode after payment + key.");
+        }
+
+        window.onload = () => {
+            rollAllTrigrams();
+        };
+    </script>
+</body>
+</html>

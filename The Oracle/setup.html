@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oracle Setup – Add xAI Key</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f131a; --accent-red: #b91c1c; --accent-red-hover: #dc2626;
+            --text-steel: #9ca3af; --glow-crimson: rgba(185,28,28,0.6);
+        }
+        body { font-family: 'Playfair Display', serif; background-color: var(--bg-dark); color: #f1f5f9; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .card { background: #1f2937; padding: 2.5rem; border-radius: 1rem; max-width: 500px; width: 100%; border: 1px solid var(--accent-red); box-shadow: 0 0 40px rgba(185,28,28,0.3); }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1 class="text-4xl font-black text-center mb-6">
+            <span class="text-[var(--accent-red)]">O</span>racle Setup
+        </h1>
+        <h2>Profile</h2>
+    <label>What should I call you?</label>
+    <input type="text" id="Name" placeholder="Explorer Name" />
+        <p class="text-center text-gray-300 mb-8">Add your personal xAI API key to unlock full Grok power in the main app.<br><br><strong>Key stays only in this browser.</strong></p>
+
+        <p class="text-sm text-[var(--text-steel)] mb-6">
+            Steps:<br>
+            1. Go to <a href="https://console.x.ai/" target="_blank" class="text-[var(--accent-red)] hover:underline">console.x.ai</a><br>
+            2. Sign in → API Keys → Create new key<br>
+            3. Copy (starts with xai-) → paste below
+        </p>
+
+        <input type="text" id="xai-key-input" placeholder="xai-..." class="w-full p-4 mb-6 bg-gray-900 border border-[var(--accent-red)]/50 rounded-xl text-white font-mono focus:outline-none focus:border-[var(--accent-red)]">
+
+        <div class="flex gap-4">
+            <button onclick="saveKey()" class="flex-1 py-4 bg-[var(--accent-red)] hover:bg-[var(--accent-red-hover)] text-white font-bold rounded-xl transition">Save Key</button>
+            <button onclick="window.location.href='index.html'" class="flex-1 py-4 bg-gray-700 hover:bg-gray-800 text-white font-bold rounded-xl transition">Back to Oracle</button>
+        </div>
+
+        <p class="text-xs text-center mt-6 text-gray-500">After saving, return to the main app and refresh to use full mode.</p>
+    </div>
+
+    <script>
+        const API_KEY_STORAGE = 'oracle_xai_key';
+
+        function saveKey() {
+            const key = document.getElementById('xai-key-input').value.trim();
+            if (!key.startsWith('xai-')) {
+                alert("Invalid key – must start with 'xai-'");
+                return;
+            }
+            localStorage.setItem(API_KEY_STORAGE, key);
+            alert("Key saved, Neil!\n\nReturn to the main Oracle page and refresh.\nFull Grok mode is now active.");
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
