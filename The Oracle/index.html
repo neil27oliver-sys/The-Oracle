@@ -71,7 +71,7 @@
                 <span class="text-[var(--accent-red)]">T</span>esla's <span class="text-[var(--accent-red)]">T</span>rigram <span class="text-[var(--accent-red)]">O</span>racle
             </h1>
             <p class="text-sm text-gray-400 max-w-lg mx-auto font-['Inter']">
-                Ask anything. Unlock full Grok power for $3 one-time to get deep, personalized 3-6-9 insights powered by xAI. [cite: 42]
+                Ask anything. Unlock full Grok power for $9 one-time to get deep, personalized 3-6-9 insights powered by xAI. [cite: 42]
             </p>
         </header>
 
@@ -108,7 +108,7 @@
 <div id="pay-modal" class="modal-overlay">
     <div class="modal-content">
         <h2 class="text-3xl font-black text-[var(--accent-red)] mb-2">Unlock the Deep Dive</h2>
-        <p class="text-gray-400 mb-8 font-['Inter']">Unlock full Grok-4 Analysis for a one-time payment of $3.</p>
+        <p class="text-gray-400 mb-8 font-['Inter']">Unlock full Grok-4 Analysis for a one-time payment of $9.</p>
         <div id="paypal-button-container" class="w-full"></div>
         <button onclick="closePaywall()" class="mt-6 text-gray-500 underline text-sm">Cancel Transaction</button>
     </div>
@@ -178,7 +178,7 @@
         paypal.Buttons({
             createOrder: (data, actions) => {
                 return actions.order.create({
-                    purchase_units: [{ amount: { value: '3.00' } }],
+                    purchase_units: [{ amount: { value: '9.00' } }],
                     application_context: { shipping_preference: 'NO_SHIPPING' }
                 });
             },
