@@ -40,7 +40,7 @@
                     <span class="text-[var(--accent-red)]">T</span>esla's <span class="text-[var(--accent-red)]">T</span>rigram <span class="text-[var(--accent-red)]">O</span>racle
                 </h1>
                 <p class="text-xl md:text-2xl text-[var(--text-steel)] font-['Inter']">3-6-9 Field Decoder • Infinite Resonance</p>
-                <p class="text-sm text-gray-400 mt-2">Hi Neil Oliver — ask anything. Unlock full Grok power for $3 one-time to get deep, personalized 3-6-9 insights powered by xAI.</p>
+                <p class="text-sm text-gray-400 mt-2">Hi Neil Oliver — ask anything. Unlock full Grok power for $9 one-time to get deep, personalized 3-6-9 insights powered by xAI.</p>
             </header>
 
             <div id="dice-grid" class="flex justify-center gap-8 md:gap-12 mb-10 p-6 bg-gray-950/70 rounded-2xl shadow-2xl border border-[var(--accent-red)]/30"></div>
@@ -79,7 +79,7 @@
     <div id="paywall-modal" class="modal-container hidden">
         <div class="modal-content">
             <h2 class="text-3xl font-black text-[var(--accent-red)] mb-4 text-center">Unlock Full Oracle</h2>
-            <p class="text-gray-300 text-center mb-3 font-['Inter'] text-lg">One-time $3 • Lifetime Full Access • No Shipping</p>
+            <p class="text-gray-300 text-center mb-3 font-['Inter'] text-lg">One-time $9 • Lifetime Full Access • No Shipping</p>
             <p class="text-sm text-[var(--text-steel)] text-center mb-6">Long Grok-powered replies + Deep Overdrive</p>
             <div id="paypal-button-container" class="mb-6"></div>
             <button onclick="document.getElementById('paywall-modal').classList.add('hidden')" class="w-full py-4 bg-gray-700 hover:bg-gray-800 text-white font-bold rounded-xl transition text-lg">← Back (Promo Mode)</button>
@@ -93,7 +93,7 @@
             <h3 class="text-2xl font-bold text-[var(--accent-red)] mb-5 text-center">Payment Successful!</h3>
             <p class="text-gray-300 mb-6 text-center font-['Inter']">
                 Thank you, Neil Oliver!<br><br>
-                Your $3 payment is complete.<br><br>
+                Your $9 payment is complete.<br><br>
                 To unlock full Grok mode:<br>
                 Click below to open setup.html in a new tab and add your xAI API key.
             </p>
@@ -125,7 +125,7 @@
         function rerollSingleTrigram(idx) { trigrams[idx] = rollTrigram(); rollAllTrigrams(); }
 
         function getPromoShortResponse(prompt, trigramStr) {
-            return `Hi Neil Oliver!\n\n**Trigram**: ${trigramStr}\n\nShort promo insight: "${prompt}" resonates with 3-6-9 flow.\n\nThe Oracle decodes your questions using Tesla's sacred 3-6-9 pattern — past, present, future energy flow. Unlock full mode ($3 one-time) for long, detailed Grok-powered revelations + deep overdrive analysis.`;
+            return `Hi Neil Oliver!\n\n**Trigram**: ${trigramStr}\n\nShort promo insight: "${prompt}" resonates with 3-6-9 flow.\n\nThe Oracle decodes your questions using Tesla's sacred 3-6-9 pattern — past, present, future energy flow. Unlock full mode ($9 one-time) for long, detailed Grok-powered revelations + deep overdrive analysis.`;
         }
 
         function showPaywall() {
@@ -134,7 +134,7 @@
                 document.getElementById('paypal-button-container').innerHTML = '';
                 paypal.Buttons({
                     createOrder: (data, actions) => actions.order.create({
-                        purchase_units: [{ amount: { value: '3.00' } }],
+                        purchase_units: [{ amount: { value: '9.00' } }],
                         application_context: { shipping_preference: "NO_SHIPPING" }
                     }),
                     onApprove: (data, actions) => actions.order.capture().then(() => {
