@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tesla's Trigram Oracle</title>
-    <link rel="icon" type="image/png" href="assets/flavicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
-    <script src="https://www.paypal.com/sdk/js?client-id=AWMjw-JB6E8nFkjToPpNNJkpPk9lxnp1I8IF13-djVLcOQ2daRj2k8tCM4jEHkjm_C8mPpnyO1Wj_rF4&currency=USD&components=buttons,hosted-fields&disable-funding=venmo,credit"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID_HERE&currency=USD&components=buttons"></script>
     
     <style>
         :root {
@@ -30,20 +29,19 @@
             background-attachment: fixed;
             min-height: 100vh;
         }
-        /* SCROLL FIX FOR MODAL */
         .modal-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.95);
             z-index: 100;
-            overflow-y: auto; /* This allows the whole modal to scroll */
+            overflow-y: auto;
             display: none;
             padding: 20px 0;
             -webkit-overflow-scrolling: touch;
         }
         .modal-content {
             background: #1f2937;
-            margin: 20px auto 100px auto; /* Huge bottom margin so PayPal button is never stuck */
+            margin: 20px auto 100px auto;
             padding: 2rem;
             border-radius: 1rem;
             width: 90%;
@@ -55,7 +53,6 @@
         .btn-locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
         .btn-active { opacity: 1; cursor: pointer; filter: none; }
         .dice-slot { transition: transform 0.2s; cursor: pointer; }
-        .dice-slot:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
@@ -73,16 +70,16 @@
                 <span class="text-[var(--accent-red)]">T</span>esla's <span class="text-[var(--accent-red)]">T</span>rigram <span class="text-[var(--accent-red)]">O</span>racle
             </h1>
             <p class="text-sm text-gray-400 max-w-lg mx-auto font-['Inter']">
-                Ask anything. Unlock full Grok power for $3 one-time to get deep, personalized 3-6-9 insights powered by xAI.
+                Ask anything. Unlock full Grok power for $3 one-time to get deep, personalized 3-6-9 insights powered by xAI. [cite: 42]
             </p>
         </header>
 
         <div id="dice-container" class="flex justify-center gap-6 mb-12 py-6 bg-black/40 rounded-3xl border border-white/5 max-w-xl mx-auto w-full">
-            </div>
+        </div>
 
         <div class="max-w-2xl mx-auto w-full space-y-6">
             <div class="bg-[var(--card-bg)] p-6 rounded-2xl border border-white/10 shadow-2xl">
-                <input type="text" id="user-query" placeholder="Transmit your query to the Field..." class="w-full p-4 bg-transparent border-b-2 border-[var(--accent-red)] text-xl outline-none mb-6">
+                <input type="text" id="user-query" placeholder="Transmit your query to the Field..." class="w-full p-4 bg-transparent border-b-2 border-[var(--accent-red)] text-xl outline-none mb-6 font-['Inter']">
                 <button onclick="runInitialAnalysis()" class="w-full py-5 rounded-xl bg-gradient-to-r from-[var(--accent-red)] to-red-900 text-white font-bold text-xl shadow-lg">
                     Ignite the Oracle
                 </button>
@@ -98,7 +95,7 @@
                     <button id="deep-dive-btn" onclick="startDeepDiveFlow()" class="w-full py-4 bg-[var(--accent-olive)] text-white font-bold rounded-xl text-lg hover:bg-opacity-90">
                         ⚡ Resonance Overdrive (Deep Dive)
                     </button>
-                    <button onclick="resetApp()" class="w-full py-4 bg-gray-800 text-white font-bold rounded-xl text-lg">
+                    <button onclick="refreshAndReset()" class="w-full py-4 bg-gray-800 text-white font-bold rounded-xl text-lg">
                         ← Back to Initial Screen
                     </button>
                 </div>
@@ -110,10 +107,8 @@
 <div id="pay-modal" class="modal-overlay">
     <div class="modal-content">
         <h2 class="text-3xl font-black text-[var(--accent-red)] mb-2">Unlock the Deep Dive</h2>
-        <p class="text-gray-400 mb-8">Unlock full Grok-4 Analysis for a one-time payment of $3.</p>
-        
+        <p class="text-gray-400 mb-8 font-['Inter']">Unlock full Grok-4 Analysis for a one-time payment of $3.</p>
         <div id="paypal-button-container" class="w-full"></div>
-        
         <button onclick="closePaywall()" class="mt-6 text-gray-500 underline text-sm">Cancel Transaction</button>
     </div>
 </div>
@@ -131,12 +126,12 @@
     function checkPaymentStatus() {
         const btn = document.getElementById('setup-btn');
         if (isPaid) {
-            btn.classList.replace('btn-locked', 'btn-active');
+            btn.classList.replace('btn-locked', 'btn-active'); // [cite: 35]
         }
     }
 
     function goToSetup() {
-        if (isPaid) window.location.href = 'setup.html';
+        if (isPaid) window.location.href = 'setup.html'; // [cite: 36]
         else alert("Unlock Full Access to enter Setup.");
     }
 
@@ -156,7 +151,6 @@
         renderTrigrams();
     }
 
-    // STEP 1: INITIAL HOOK
     function runInitialAnalysis() {
         const query = document.getElementById('user-query').value.trim();
         if(!query) return alert("Please enter a query.");
@@ -169,7 +163,6 @@
         document.getElementById('nav-group').classList.remove('hidden');
     }
 
-    // STEP 2: PAYMENT OR DEEP DIVE
     function startDeepDiveFlow() {
         if (!isPaid) {
             document.getElementById('pay-modal').style.display = 'block';
@@ -194,7 +187,7 @@
                     isPaid = true;
                     checkPaymentStatus();
                     closePaywall();
-                    window.location.href = 'setup.html'; // Go to setup to add key
+                    window.location.href = 'setup.html'; // [cite: 48]
                 });
             }
         }).render('#paypal-button-container');
@@ -223,19 +216,19 @@
                 })
             });
             const data = await response.json();
-            out.textContent = data.choices[0].message.content;
+            out.innerHTML = `<div class='whitespace-pre-wrap'>${data.choices[0].message.content}</div>`;
         } catch (e) {
             out.textContent = "Resonance Error. Please check your API key in Setup.";
             document.getElementById('deep-dive-btn').classList.remove('hidden');
         }
     }
 
-    function resetApp() {
-        document.getElementById('user-query').value = "";
-        document.getElementById('display-text').textContent = "The Field awaits your transmission...";
-        document.getElementById('nav-group').classList.add('hidden');
-        currentTrigrams = [3, 6, 9];
-        renderTrigrams();
+    /**
+     * SOLUTION: Refresh and Reset 
+     * Triggers a page reload to ensure a perfectly clean initial state.
+     */
+    function refreshAndReset() {
+        window.location.reload();
     }
 
     function closePaywall() { document.getElementById('pay-modal').style.display = 'none'; }
