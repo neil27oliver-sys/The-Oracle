@@ -21,7 +21,6 @@
         .dice-slot { transition: all 0.25s ease; cursor: pointer; text-shadow: 0 0 12px var(--glow-crimson); }
         .result-box, .input-group { background-color: var(--card-bg); border: 1px solid rgba(185,28,28,0.4); box-shadow: 0 0 35px rgba(185,28,28,0.12); }
         
-        /* Setup Button States */
         #setup-btn { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 30; transition: all 0.3s ease; }
         .btn-locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
         .btn-active { opacity: 1; cursor: pointer; filter: none; }
@@ -103,7 +102,6 @@
         let trigrams = [3, 6, 9];
         let currentPrompt = "";
 
-        // On Load: Check payment status and set initial dice
         window.onload = () => {
             updateSetupButtonState();
             renderDice();
@@ -128,7 +126,6 @@
             const grid = document.getElementById('dice-grid');
             const icons = { 3: '⧋', 6: '⧉', 9: '⧇' };
             const colors = { 3: 'text-red-800', 6: 'text-rose-400', 9: 'text-red-500' };
-            
             grid.innerHTML = trigrams.map((val, idx) => `
                 <div class="dice-slot text-7xl md:text-8xl font-black ${colors[val]}" onclick="rerollDice(${idx})">
                     ${icons[val]}
@@ -141,13 +138,11 @@
             renderDice();
         }
 
-        // SEQUENCE 1: The Normal/Hook Analysis
         function startOracle() {
             const input = document.getElementById('user-prompt').value.trim();
             if (!input) return alert("Please enter a query.");
             currentPrompt = input;
 
-            // Generate "Normal" Analysis text
             const trigramStr = trigrams.join('-');
             document.getElementById('result-output').innerHTML = `
                 **Trigram Sequence**: ${trigramStr}<br><br>
@@ -159,7 +154,6 @@
             document.getElementById('deep-dive-btn').classList.remove('hidden');
         }
 
-        // SEQUENCE 2: Deep Dive Flow
         function handleDeepDiveFlow() {
             if (!isPaid) {
                 document.getElementById('paywall-modal').classList.remove('hidden');
@@ -167,6 +161,28 @@
             } else {
                 runDeepDiveAnalysis();
             }
+        }
+
+        function initPayPal() {
+            document.getElementById('paypal-button-container').innerHTML = '';
+            paypal.Buttons({
+                createOrder: (data, actions) => actions.order.create({
+                    purchase_units: [{
+                        amount: { value: '3.00' }
+                    }],
+                    // NO_SHIPPING added here to remove address requirement
+                    application_context: {
+                        shipping_preference: 'NO_SHIPPING'
+                    }
+                }),
+                onApprove: (data, actions) => actions.order.capture().then(() => {
+                    localStorage.setItem(PAID_KEY, 'true');
+                    isPaid = true;
+                    updateSetupButtonState();
+                    closeModal('paywall-modal');
+                    window.location.href = 'setup.html';
+                })
+            }).render('#paypal-button-container');
         }
 
         async function runDeepDiveAnalysis() {
@@ -178,7 +194,7 @@
             }
 
             document.getElementById('result-output').innerHTML = '<div class="loading-animation"></div> Synchronizing with Grok Resonance...';
-            document.getElementById('deep-dive-btn').classList.add('hidden'); // Hide during analysis
+            document.getElementById('deep-dive-btn').classList.add('hidden');
 
             try {
                 const response = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -190,33 +206,16 @@
                     body: JSON.stringify({
                         model: "grok-4",
                         messages: [
-                            { role: "system", content: `You are Tesla's Trigram Oracle. Sequence: ${trigrams.join('-')}. 3=Past, 6=Present, 9=Future. Provide a massive, physics-based mystical analysis.` },
+                            { role: "system", content: `You are Tesla's Trigram Oracle. Provide a deep, physics-based analysis.` },
                             { role: "user", content: currentPrompt }
                         ]
                     })
                 });
-
                 const data = await response.json();
                 document.getElementById('result-output').textContent = data.choices[0].message.content;
             } catch (err) {
-                document.getElementById('result-output').textContent = "Connection Error. Please verify your API key in Setup.";
+                document.getElementById('result-output').textContent = "Connection Error. Check API key in Setup.";
             }
-        }
-
-        function initPayPal() {
-            document.getElementById('paypal-button-container').innerHTML = '';
-            paypal.Buttons({
-                createOrder: (data, actions) => actions.order.create({
-                    purchase_units: [{ amount: { value: '3.00' } }]
-                }),
-                onApprove: (data, actions) => actions.order.capture().then(() => {
-                    localStorage.setItem(PAID_KEY, 'true');
-                    isPaid = true;
-                    updateSetupButtonState();
-                    closeModal('paywall-modal');
-                    window.location.href = 'setup.html';
-                })
-            }).render('#paypal-button-container');
         }
 
         function resetUI() {
